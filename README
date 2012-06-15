@@ -1,2 +1,5 @@
 libvirt API を使ってWeb上から仮想マシンを起動、停止するperl 
 Sys::Virt, CGI::Application
+
+libvirt への接続は qemu+ssh を想定しているので、
+あらかじめ passphrase なしのssh 認証ができるように設定しておく必要あり

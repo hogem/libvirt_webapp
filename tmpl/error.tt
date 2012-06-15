@@ -1,0 +1,29 @@
+[% INCLUDE header.tt %]
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand active" href="/">KVM Admin Page</a>
+    </div>
+  </div>
+</div>
+
+<br>
+
+<div class="container" style="padding-top:40px">
+
+[% IF status == 404 %]
+<div class="error">
+  <strong>404 Not Found </strong>
+</div>
+[% END %]
+
+<div [% IF class %] class="[% class %]" [% END %]>
+  [% error %]
+</div> 
+
+</div>
+
+</body>
+</html>

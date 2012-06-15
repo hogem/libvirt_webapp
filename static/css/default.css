@@ -1,0 +1,34 @@
+html {
+  color: #000000;
+  background-color: #ffffff;
+  font-size: small;
+  font-family: "Courier New", "monospace", "Courier New", "Consolas", "Monospace", sans-serif;
+}
+
+td {
+  padding: 5px;
+}
+
+.match {
+  color: red;
+  font-weight: bold;
+}
+
+.warn {
+  color: red;
+}
+
+.highlight { background-color: yellow }
+
+a.normal_text {
+  color: white;
+}
+
+.error {
+  font-size: 200%;
+  margin: 20px;
+}
+.error strong {
+  font-size: 250%;
+  font-weight: bold;
+}

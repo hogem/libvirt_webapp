@@ -1,0 +1,2 @@
+libvirt API を使ってWeb上から仮想マシンを起動、停止するperl 
+Sys::Virt, CGI::Application

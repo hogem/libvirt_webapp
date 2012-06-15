@@ -2,3 +2,4 @@
 hosts:
   - localhost
 user: staff
+timeout: 3

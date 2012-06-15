@@ -42,12 +42,14 @@ sub do_index {
   my $conf  = $self->config_param();
   my @hosts = @{ $conf->{hosts} }; 
   my $user  = $conf->{user};
+  my $timeout = $conf->{timeout};
 
   my $data;
   for my $host ( @hosts ) {
-    my $kvm = MyApp::KVM->new({ user => $user, host => $host});
+    my $kvm = MyApp::KVM->new({ user => $user, host => $host, timeout => $timeout});
 
     my $domains = $kvm->get_active_domain;
+    next if not defined $domains;
     $data->{$host} = $domains;
   }
 
@@ -119,5 +121,6 @@ sub untaint {
   $str =~ m{^([-_\.0-9A-Za-z]+)$}o;
   return $1;
 }
+
 
 1;

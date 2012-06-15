@@ -17,35 +17,22 @@ sub new  {
 sub get_active_domain {
   my ($self) = @_;
 
-  my $active = $self->is_ssh_active( $self->get_host );
-  return if not $active;
+  $self->is_ssh_active( $self->get_host ) || return;
 
-  my $uri = sprintf "qemu+ssh://%s\@%s/system", $self->get_user, $self->get_host;
-  my $vmm; eval {
-    $vmm = Sys::Virt->new(uri => $uri, readonly => 1);
-  };
-  croak $@ if $@;
+  my $vmm = $self->get_sysvirt_object(1) || return;
 
-  return if not $vmm;
-
-  #my @domains;
   my $domains;
   for my $vm ($vmm->list_domains, $vmm->list_defined_domains) {
     $domains->{ $vm->get_name } = $vm->get_info->{state};
   };
 
-  #return @domains;
   return $domains;
-
 }
 
 sub get_vm_info {
   my ($self, $vm) = @_;
 
-  my $uri = sprintf "qemu+ssh://%s\@%s/system", $self->get_user, $self->get_host;
-  my $vmm; eval {
-    $vmm = Sys::Virt->new(uri => $uri, readonly => 1);
-  };
+  my $vmm = $self->get_sysvirt_object(1) || return;
 
   my $dom;
   eval {
@@ -64,11 +51,7 @@ sub get_vm_info {
 sub action {
   my ($self, $vm, $action) = @_;
 
-  my $uri = sprintf "qemu+ssh://%s\@%s/system", $self->get_user, $self->get_host;
-  my $vmm; eval {
-    $vmm = Sys::Virt->new(uri => $uri, readonly => 0);
-  };
-  return $@ if $@;
+  my $vmm = $self->get_sysvirt_object(0) || return;
   my $dom;
   eval {
     $dom = $vmm->get_domain_by_name($vm);
@@ -87,6 +70,21 @@ sub action {
   return;
 }
 
+sub get_sysvirt_object {
+  my ($self, $readonly) = @_;
+  $SIG{ALRM} = sub {
+    croak "timeout";
+  };
+  my $uri = sprintf "qemu+ssh://%s\@%s/system", $self->get_user, $self->get_host;
+  my $vmm; eval {
+    alarm $self->get_timeout;
+    $vmm = Sys::Virt->new(uri => $uri, readonly => $readonly);
+    alarm 0;
+  };
+  alarm 0;
+  return $vmm;
+}
+
 sub modify_info {
   my ($self, $info) = @_;
 
@@ -103,6 +101,10 @@ sub get_host {
 
 sub get_user {
   return shift->{user};
+}
+
+sub get_timeout {
+  return shift->{timeout} || 0;
 }
 
 sub is_ssh_active {

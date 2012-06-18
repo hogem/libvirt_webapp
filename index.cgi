@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 use FindBin::libs;
-use MyApp;
+use MyApp::Dispatch;
 
-my $app = MyApp->new();
-$app->run();
+my $app = MyApp::Dispatch->dispatch();

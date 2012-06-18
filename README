@@ -1,5 +1,22 @@
 libvirt API を使ってWeb上から仮想マシンを起動、停止するperl 
-Sys::Virt, CGI::Application
+(with Sys::Virt, CGI::Application)
 
 libvirt への接続は qemu+ssh を想定しているので、
-あらかじめ passphrase なしのssh 認証ができるように設定しておく必要あり
+あらかじめ passphrase なしのssh 認証ができるように設定しておく
+
+- vnc接続
+javaのTightVNCを利用。
+ssh でhypervisorに接続してポートフォワード経由で接続している
+このときのssh をパスワードなしで接続するためには
+
+## hypervisor
+# useradd vnc -s /bin/false
+# vi /etc/ssh/sshd_config
+/etc/ssh/sshd_config 
+  Match user vnc
+    PasswordAuthentication yes
+    PermitEmptyPasswords yes
+    AllowTcpForwarding yes
+    # Specifies the maximum number of open sessions permitted per network connection
+    MaxSessions 3
+のような設定をして vnc@host で接続できるようにしておく

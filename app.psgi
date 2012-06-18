@@ -10,7 +10,7 @@ my $root_dir = File::Basename::dirname(__FILE__);
 
 builder {
   enable 'Static',
-    path => qr!^/(?:(?:css|js|img)/|favicon\.ico$)!,
+    path => qr!^/(?:(?:css|js|img|error|vnc)/|favicon\.ico$)!,
     root => $root_dir . '/static';
   mount "/"    => Plack::App::WrapCGI->new(script => "index.cgi")->to_app;
 };

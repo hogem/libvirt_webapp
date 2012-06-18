@@ -1,5 +1,6 @@
 ---
 hosts:
   - localhost
-user: staff
-timeout: 3
+libvirt_ssh_user: staff
+#timeout: 3
+vnc_ssh_user: vnc

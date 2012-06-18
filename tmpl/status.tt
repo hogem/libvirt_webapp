@@ -4,10 +4,16 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand active" href="/">KVM Admin Page</a>
+      <a class="brand active" href="/">Libvirt Admin Page</a>
     </div>
   </div>
 </div>
+
+<ul class="breadcrumb">
+  <li><a href="/">Home</a> <span class="divider">/</span></li>
+  <li><a href="/[% host %]"> [% host %] </a> <span class="divider">/</span></li>
+  <li class="active"> [% vm %] <span class="divider">/</span></li>
+</ul>
 
 <div class="container" style="padding-top:50px">
 
@@ -20,20 +26,24 @@
 
 
 <div>
-  <a href="./index.cgi?host=[% host %]&amp;vm=[% vm %]&amp;rm=status" class="btn"><i class="icon-refresh"></i> 更新 </a>
+  <a href="/[% host %]/[% vm %]/status/" class="btn"><i class="icon-refresh">&nbsp;</i> 更新 </a>
 </div>
 
 <br>
 
 <table summary="vm_status" class="table table-striped table-bordered table-condensed">
   <tr>
-    <th colspan="2"> 仮想サーバ ステータス </th>
+    <th ABBR="vm_status" colspan="2"> 仮想サーバ ステータス </th>
+  </tr>
+  <tr>
+    <td> hypervisor </td>
+    <td> [% host %] </td>
   </tr>
   <tr>
     <td> ホスト名 </td>
     <td> [% vm %] </td>
   </tr>
-  <tr>
+
 [% FOR item IN info %]
   <tr>
     [% FOR stuff IN item %]
@@ -45,19 +55,32 @@
   <tr>
     <td> 仮想サーバ操作 </td>
     <td>
+      <form class="nomargin" method="POST" action="/[% host %]/[% vm %]/status/">
+        <input type="hidden" value="create" name="action">
+        <input type="submit" value="起動" class="btn btn-primary">
+        <span class="btn btn-danger">
+          <a href="#DESTROY" data-toggle="modal" class="normal_text">停止</a>
+        </span>
+      </form>
+      <!--
       <span class="btn btn-primary">
-        <a href="./index.cgi?host=[% host %]&amp;vm=[% vm %]&amp;action=create&amp;rm=status" class="normal_text">起動</a>
-     </span>
-     <span class="btn btn-danger">
-       <a href="#myModal" data-toggle="modal" class="normal_text">停止</a>
-    </span>
+        <a href="/status/[% host %]/[% vm %]/create/" class="normal_text">起動</a>
+      </span>
+      <span class="btn btn-danger">
+        <a href="#DESTROY" data-toggle="modal" class="normal_text">停止</a>
+      </span>
+      -->
     </td>
+  </tr>
+  <tr>
+    <td> コンソール </td>
+    <td> <a href="/[% host %]/[% vm %]/console/" class="btn btn-info" target="_blank">コンソールを開く</a>  </td>
   </tr>
 </table>
 
 </div>
 
-<div class="modal hide fade" id="myModal">
+<div class="modal hide fade" id="DESTROY">
   <div class="modal-header">
     <a class="close" data-dismiss="modal">x</a>
     <h3>仮想サーバ 停止</h3>
@@ -66,8 +89,15 @@
     <p>仮想サーバを停止(電源オフ)します。よろしいですか？</p>
   </div>
   <div class="modal-footer">
-    <a href="./index.cgi?host=[% host %]&amp;vm=[% vm %]&amp;action=destroy&amp;rm=status" class="btn btn-primary">OK!</a>
+    <!--
+    <a href="/status/[% host %]/[% vm %]/destroy/" class="btn btn-primary">OK!</a>
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    -->
+    <form class="nomargin" method="POST" action="/[% host %]/[% vm %]/status/">
+      <input type="hidden" value="destroy" name="action">
+      <input type="submit" value="OK" class="btn btn-danger">
+      <a href="./" class="btn" data-dismiss="modal">Cancel</a>
+    </form>
   </div>
 </div>
 

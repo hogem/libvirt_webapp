@@ -4,14 +4,23 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand active" href="/">KVM Admin Page</a>
+      <a class="brand active" href="/">Libvirt Admin Page</a>
     </div>
   </div>
 </div>
 
-<br>
+<ul class="breadcrumb">
+  <li><a href="/">Home</a> <span class="divider">/</span></li>
+</ul>
 
 <div class="container" style="padding-top:40px">
+
+[% IF dead_hosts.size >= 1 %]
+<div [% dead_hosts %] class="alert alert-error">
+  [% FOR host IN dead_hosts %] [% host %] [% END %] に接続できません
+</div>
+[% END %]
+
 
 <table border="1" summary="kvm_status" class="table table-striped table-bordered table-condensed">
   <tr>
@@ -24,7 +33,7 @@
   [%- SET dom_state = vmm.value -%]
   <tr>
     <td> [% stuff.key %] </td>
-    <td> <a href="./index.cgi?rm=status&amp;host=[% stuff.key %]&amp;vm=[% vmm.key %]">[% vmm.key %] </a> </td>
+    <td> <a href="/[% stuff.key %]/[% vmm.key %]/status/">[% vmm.key %] </a> </td>
     <td> [% state.$dom_state %] </td>
   </tr>
   [%- END %]

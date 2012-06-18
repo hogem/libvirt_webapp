@@ -6,20 +6,34 @@ use Sys::Virt;
 use Sys::Virt::Domain;
 use IO::Socket;
 use Carp;
+use XML::Simple;
 
 
 sub new  {
   my ($class, $stuff) = @_;
 
-  return bless $stuff, $class;
+  $stuff->{timeout} ||= 3;
+  bless $stuff, $class;
+  $stuff->{vmm} = $stuff->get_sysvirt_object($stuff->{readonly}); 
+  return $stuff;
+}
+
+sub set_dom {
+  my ($self, $vm) = @_;
+
+  my $vmm = $self->get_vmm || croak;
+
+  my $dom;
+  eval {
+    $self->{dom} = $vmm->get_domain_by_name($vm);
+  };
+
 }
 
 sub get_active_domain {
   my ($self) = @_;
 
-  $self->is_ssh_active( $self->get_host ) || return;
-
-  my $vmm = $self->get_sysvirt_object(1) || return;
+  my $vmm = $self->get_vmm || return;
 
   my $domains;
   for my $vm ($vmm->list_domains, $vmm->list_defined_domains) {
@@ -30,34 +44,20 @@ sub get_active_domain {
 }
 
 sub get_vm_info {
-  my ($self, $vm) = @_;
+  my ($self) = @_;
 
-  my $vmm = $self->get_sysvirt_object(1) || return;
+  my $vmm = $self->get_vmm || return;
+  my $dom = $self->get_dom || return; 
 
-  my $dom;
-  eval {
-    $dom = $vmm->get_domain_by_name($vm);
-  };
-
-  if ($@) {
-    return;
-  }
-  else {
-    return $dom->get_info;
-  }
-
+  return $dom->get_info;
 }
 
 sub action {
-  my ($self, $vm, $action) = @_;
+  my ($self, $action) = @_;
 
-  my $vmm = $self->get_sysvirt_object(0) || return;
-  my $dom;
-  eval {
-    $dom = $vmm->get_domain_by_name($vm);
-  };
-  return $@ if $@;
- 
+  my $vmm = $self->get_vmm || return;
+  my $dom = $self->get_dom || return;
+
   if ($action eq 'destroy') {
     eval { $dom->destroy() };
     return $@;
@@ -70,19 +70,42 @@ sub action {
   return;
 }
 
+sub get_graphics_config {
+  my ($self) = @_;
+  
+  my $vmm = $self->get_vmm || return;
+  my $dom = $self->get_dom || return;
+
+  my $xml = $dom->get_xml_description();
+  my $xs  = XML::Simple->new();
+  my $ref = $xs->XMLin($xml);
+
+  return $ref->{devices}->{graphics};
+
+}
+
 sub get_sysvirt_object {
   my ($self, $readonly) = @_;
-  $SIG{ALRM} = sub {
-    croak "timeout";
-  };
+
+  $self->is_ssh_active( $self->get_host ) || return;
+
+#  $SIG{ALRM} = sub {
+#    croak "timeout";
+#  };
   my $uri = sprintf "qemu+ssh://%s\@%s/system", $self->get_user, $self->get_host;
   my $vmm; eval {
-    alarm $self->get_timeout;
+#    alarm $self->get_timeout;
     $vmm = Sys::Virt->new(uri => $uri, readonly => $readonly);
-    alarm 0;
+#    alarm 0;
   };
-  alarm 0;
-  return $vmm;
+#  alarm 0;
+  if ($@) {
+    return;
+    #croak $@;
+  }
+  else {
+    return $vmm;
+  }
 }
 
 sub modify_info {
@@ -93,6 +116,14 @@ sub modify_info {
   push @$new, { "CPU"      => $info->{nrVirtCpu} };
   push @$new, { "状態"     => get_dom_state_table()->{ $info->{state} } };
   return $new;
+}
+
+sub get_vmm {
+  return shift->{vmm};
+}
+
+sub get_dom {
+  return shift->{dom};
 }
 
 sub get_host {

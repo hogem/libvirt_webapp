@@ -1,0 +1,30 @@
+[% INCLUDE header.tt %]
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand active" href="/">Libvirt Admin Page</a>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="padding-top:40px">
+
+<div class="title">
+  <strong>TightVNC desktop </strong>
+</div>
+
+<applet archive="/vnc/TightVncViewer.jar"
+        code="com.tightvnc.vncviewer.VncViewer"
+        width="1" height="1">
+  <param name="SOCKETFACTORY" VALUE="com.tightvnc.vncviewer.SshTunneledSocketFactory">
+  <param name="SSHHOST" VALUE="[% vnc_ssh_user %]@[% host %]">
+  <param name="HOST" value="127.0.0.1">
+  <param name="PORT" value="[% port %]">
+  <param name="Open New Window" value="yes">
+  <param name="Offer relogin" value="No" />
+</applet>
+
+</body>
+</html>

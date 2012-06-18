@@ -4,17 +4,19 @@
 <div class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand active" href="/">KVM Admin Page</a>
+      <a class="brand active" href="/">Libvirt Admin Page</a>
     </div>
   </div>
 </div>
 
-<br>
+<ul class="breadcrumb">
+  <li><a href="/">Home</a> <span class="divider">/</span></li>
+</ul>
 
 <div class="container" style="padding-top:40px">
 
 [% IF status == 404 %]
-<div class="error">
+<div class="title">
   <strong>404 Not Found </strong>
 </div>
 [% END %]

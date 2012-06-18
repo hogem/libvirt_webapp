@@ -9,6 +9,11 @@
   </div>
 </div>
 
+<ul class="breadcrumb">
+  <li><a href="/">Home</a> <span class="divider">/</span></li>
+  <li><a href="/[% host %]"> [% host %] </a> <span class="divider">/</span></li>
+</ul>
+
 <div class="container" style="padding-top:40px">
 
 <div class="title">

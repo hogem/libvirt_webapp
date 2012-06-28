@@ -3,4 +3,4 @@
 use FindBin::libs;
 use MyApp::Dispatch;
 
-my $app = MyApp::Dispatch->dispatch();
+MyApp::Dispatch->dispatch();

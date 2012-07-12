@@ -12,6 +12,7 @@ sub dispatch_args {
     table  => [
       ''               => { app => 'Index', rm => 'index' },
       ':host'          => { app => 'Index', rm => 'index' },
+      ':host/:vm/'     => { app => 'Index', rm => 'status' },
       ':host/:vm/:rm/' => { app => 'Index' },
     ],
     args_to_new => {
@@ -19,7 +20,8 @@ sub dispatch_args {
         conf => './conf/config.yaml',
       },
     },
-    #error_document => '<' . '/error/%s.htmls',
+    #error_document => '<' . '/error/%s.html',
+    error_document => '/error/%s.html',
   };
 }
 

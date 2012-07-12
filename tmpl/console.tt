@@ -20,6 +20,11 @@
   <strong>TightVNC desktop </strong>
 </div>
 
+<p>
+TightVNC Java Viewer の実行には<a href="http://www.java.com/ja/">Java Runtime Environment</a>が必要です。
+</p>
+
+
 <applet archive="/vnc/TightVncViewer.jar"
         code="com.tightvnc.vncviewer.VncViewer"
         width="1" height="1">

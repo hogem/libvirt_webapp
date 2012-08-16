@@ -16,7 +16,7 @@
 <div class="container" style="padding-top:40px">
 
 [% IF dead_hosts.size >= 1 %]
-<div [% dead_hosts %] class="alert alert-error">
+<div class="alert alert-error">
   [% FOR host IN dead_hosts %] [% host %] [% END %] に接続できません
 </div>
 [% END %]
